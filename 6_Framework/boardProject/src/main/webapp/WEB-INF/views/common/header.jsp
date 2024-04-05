@@ -10,7 +10,7 @@
 <header>
     <section>
         <!-- 클릭 시 메인 페이지로 이동하는 로고 -->
-        <a href="#">
+        <a href="/">
             <img src="/resources/images/logo.jpg" alt="로고" id="homeLogo">
         </a>
     </section>
@@ -29,7 +29,7 @@
                 - POST : input태그 값을 주소에 담지 않고 제출(주소에 안보임)
                         -> HTTP Body에 담아서 제출
             -->
-            <form action="#" method="GET">
+            <form action="/board/1" method="GET">
 
                 <fieldset> <!-- form태그 내 영역 구분 -->
 
@@ -41,7 +41,11 @@
                     -->
                     <input type="search" name="query" id="query"
                     placeholder="검색어를 입력해주세요."
-                    autocomplete="off">
+                    autocomplete="off" value="${param.query}">
+
+                    <%-- 제목 검색 --%>
+                    <input type="hidden" name="key" value="t">
+
 
                     <!-- 검색 버튼 -->
                     <!-- button type="submit" 이 기본값 -->
@@ -51,20 +55,66 @@
 
             </form>
 
+            <ul id=""></ul>
+
         </article>
 
     </section>
 
 
     <section></section>
+    
+    <!-- 우측 상단 드롭다운 메뉴 -->
+    <div class="header-top-menu">
+    
+    	<c:choose>
+    		<c:when test="${empty loginMember }">
+		    	<!-- 로그인 X -->
+		    	<a href="/">메인 페이지</a> | <a href="/member/login">로그인</a> 
+    		</c:when>
+    		
+    		<c:otherwise>
+	    		<!-- 로그인 O -->
+		    	<label for="headerMenuToggle">
+		    		${loginMember.memberNickname } <i class="fa-solid fa-caret-down"></i>
+		    	</label>
+		
+				<input type="checkbox" id="headerMenuToggle">
+				
+				<div class="header-menu">
+					<a href="/myPage/info">내정보</a>
+					<a href="/member/logout">로그아웃</a>
+				</div>
+    		</c:otherwise>
+    	</c:choose>
+    
+    	
+    	
+    	
+    	
+    </div>
 </header>
 
 <nav>
     <ul>
-        <li><a href="#">공지사항</a></li>
+       <%--  <li><a href="#">공지사항</a></li>
         <li><a href="#">자유 게시판</a></li>
         <li><a href="#">질문 게시판</a></li>
         <li><a href="#">FAQ</a></li>
-        <li><a href="#">1:1문의</a></li>
-    </ul>
+        <li><a href="#">1:1문의</a></li> --%>
+
+        <%-- interceptor를 이용해서 조회된 boardTypeList를
+             application scope에서 얻어와 화면에 출력 
+        --%>
+        
+        <c:forEach var="boardType" items="${boardTypeList}">
+            <li>
+                <a href="/board/${boardType.BOARD_CODE}">${boardType.BOARD_NAME}</a>
+            </li>
+        </c:forEach>
+
+        <%-- 로그인 했을 때 채팅 보여짐 --%>
+        <c:if test="${!empty loginMember}" >
+            <li><a href="/chatting">채팅</a></li>
+        </c:if>
 </nav>
